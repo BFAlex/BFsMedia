@@ -89,19 +89,6 @@ static dispatch_once_t onceToken;
     // 帧
     AVFrame *pFrame = NULL;
     pFrame = av_frame_alloc();
-    
-    
-    //
-//    AVPacket pkt;
-//    av_init_packet(&pkt);
-//    pkt.data = NULL;
-//    pkt.size = 0;
-//    while (av_read_frame(fmt_ctx, &pkt) >= 0) {
-//        AVPacket orig_pkt = pkt;
-//        do {
-//            
-//        } while (<#condition#>);
-//    }
 }
 
 @end
