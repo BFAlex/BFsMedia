@@ -7,6 +7,7 @@
 //
 
 #import "BFsFFmpegAssistant.h"
+
 #include <libavformat/avformat.h>
 #include <libavcodec/avcodec.h>
 #include <libswscale/swscale.h>
@@ -40,19 +41,22 @@ static dispatch_once_t onceToken;
 - (void)decodeVideo:(NSString *)fileName {
     
     av_register_all();
+    avcodec_register_all();
+    avformat_network_init();
+
     static AVFormatContext *fmt_ctx = NULL;
     if (avformat_open_input(&fmt_ctx, [fileName UTF8String], NULL, NULL) < 0) {
         //
         NSLog(@"1");
         return;
     }
-    
+
     if (avformat_find_stream_info(fmt_ctx, NULL) < 0) {
         NSLog(@"2");
         av_dump_format(fmt_ctx, 0, [fileName UTF8String], 0);
         return;
     }
-    
+
     // 流
     AVCodecContext *pCodecCtxOrig = NULL;
     AVCodecContext *pCodecCtx = NULL;
@@ -68,7 +72,7 @@ static dispatch_once_t onceToken;
         return;
     }
     pCodecCtx = fmt_ctx->streams[videoStream]->codec;
-    
+
     AVCodec *pCodec = NULL;
     pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
     if (pCodec == NULL) {
@@ -80,12 +84,12 @@ static dispatch_once_t onceToken;
         NSLog(@"5");
         return;
     }
-    
+
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0) {
         NSLog(@"6");
         return;
     }
-    
+
     // 帧
     AVFrame *pFrame = NULL;
     pFrame = av_frame_alloc();
